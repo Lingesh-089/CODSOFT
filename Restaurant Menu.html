@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restaurant Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: #f1f5f4;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #ffffff;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-left h1 {
+      font-size: 1.5rem;
+      color: #1a1a1a;
+    }
+
+    .nav-right input[type="text"] {
+      padding: 0.5rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 9999px;
+      outline: none;
+      font-size: 0.95rem;
+      width: 180px;
+      transition: width 0.3s ease;
+    }
+
+    .nav-right input[type="text"]:focus {
+      width: 250px;
+    }
+
+    .nav-icons {
+      display: flex;
+      gap: 1rem;
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+
+    .nav-icons span {
+      transition: transform 0.2s ease;
+    }
+
+    .nav-icons span:hover {
+      transform: scale(1.2);
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+      flex: 1;
+    }
+
+    .card {
+      background-color: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .card .info {
+      padding: 1rem;
+    }
+
+    .card .info h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card .info .meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+      color: #555;
+    }
+
+.details {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 1001;
+  display: none;
+  overflow-y: auto;
+}
+
+
+    .details img {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .details h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .details .meta {
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      color: #777;
+    }
+
+    .details p {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(100%);
+      }
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    @media screen and (min-width: 768px) {
+      .details {
+        padding: 3rem 10%;
+      }
+      .container {
+        padding: 3rem 10%;
+      }
+      .nav-right input[type="text"] {
+        width: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="nav-left">
+      <h1>🍽️ Menu</h1>
+    </div>
+    <div class="nav-right">
+      <input type="text" placeholder="Search...">
+      <div class="nav-icons">
+        <span title="Home">🏠</span>
+        <span title="Profile">👤</span>
+        <span title="Cart">🛒</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container" id="menu"></div>
+
+  <div class="details" id="details">
+    <button class="close-btn" onclick="closeDetails()">&times;</button>
+    <img id="detail-img" src="" alt="">
+    <h2 id="detail-title"></h2>
+    <div class="meta" id="detail-meta"></div>
+    <p id="detail-description"></p>
+  </div>
+
+  <script>
+    const menuItems = [
+      {
+        name: "Creamy Alfredo Pasta",
+        time: "20 min",
+        rating: 4.8,
+        price: "₹199.00",
+        img: "https://www.allrecipes.com/thmb/B-OTFUgCWDzoqr9TH4sjY5AjdPY=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/AR-236973-CreamyAlfredoSauce-0238-4x3-1-01e7091f47ae452d991abe32cbed5921.jpg",
+        description:  "Our Creamy Alfredo Pasta is a luxurious take on the beloved Italian classic, offering richness and comfort in every forkful. Tender fettuccine noodles are cooked al dente and coated in a smooth, velvety Alfredo sauce made from a blend of aged Parmesan cheese, heavy cream, and a touch of garlic for depth. The sauce clings perfectly to the pasta, ensuring each bite delivers a creamy, savory flavor with a hint of sharpness from the cheese. Garnished with finely chopped parsley and freshly cracked black pepper, this dish is both elegant and indulgent, suitable as a main course or a shared plate.<br><br><b>Main Ingredients:</b> Fettuccine pasta, Parmesan cheese, heavy cream, garlic, butter."
+      },
+      {
+        name: "Veggie Delight Pizza",
+        time: "25 min",
+        rating: 4.7,
+        price: "₹396.00",
+        img: "https://cdn.shopify.com/s/files/1/0173/8181/8422/files/20240625161049-recipeimage7_pizzagriddle_veggievegandelight.jpg?v=1719331851&width=600&height=900",
+        description: "Bursting with garden-fresh flavors, our Veggie Delight Pizza is a colorful and satisfying choice for vegetarian and health-conscious diners alike. This thin-crust masterpiece begins with a hand-rolled dough base, layered with our signature tomato sauce made from sun-ripened tomatoes and herbs. It’s generously topped with sweet bell peppers, earthy mushrooms, briny olives, and thinly sliced onions, all crowned with melted mozzarella cheese that stretches with every bite. Baked in a stone oven until the crust is crisp and golden, this pizza offers a medley of textures and a rich, herby aroma that’s hard to resist.<br><br><b>Main Ingredients:</b> Bell peppers, mushrooms, black olives, onions, mozzarella cheese, tomato sauce."
+      },
+      {
+        name: "Grilled Chicken Salad",
+        time: "15 min",
+        rating: 4.9,
+        price: "₹412.00",
+        img: "https://www.licious.in/blog/wp-content/uploads/2020/12/Grilled-Chicken-Salad-min.jpg",
+        description: "Light, nutritious, and full of flavor, our Grilled Chicken Salad is a perfect choice for those seeking a healthy yet satisfying option. Tender, juicy chicken breast is expertly grilled to achieve a smoky char while retaining its natural moisture. The protein is laid atop a crisp bed of romaine lettuce, tossed with vibrant cherry tomatoes, crunchy cucumber slices, and thinly sliced red onions. Guests can personalize their experience with a choice of house-made dressings, from zesty vinaigrettes to creamy Caesar. Each bite offers a fresh crunch paired with the savory notes of grilled meat—a perfect harmony of taste and texture.<br><br><b>Main Ingredients:</b> Grilled chicken breast, romaine lettuce, cherry tomatoes, cucumber, red onion."
+      },
+      {
+        name: "Berry Pancakes",
+        time: "10 min",
+        rating: 4.6,
+        price: "₹89.00",
+        img: "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2021/05/04/FNK_PANCAKE_CAKE_W_BERRIES_s4x3.jpg.rend.hgtvcom.1280.1280.suffix/1620149925797.webp",
+        description:"Our Berry Pancakes are a delightful treat, ideal for breakfast or a sweet afternoon indulgence. Each stack is made from golden, fluffy buttermilk pancakes cooked to a light crisp on the outside while remaining soft and airy inside. Generously layered with a vibrant mix of fresh seasonal berries—juicy strawberries, tart blueberries, and plump raspberries—they bring a burst of natural sweetness and color. Finished with a generous pour of pure maple syrup and a cloud of freshly whipped cream, this dish strikes the perfect balance between indulgent and refreshing.<br><br><b>Main Ingredients:</b> Buttermilk pancake batter, strawberries, blueberries, raspberries, maple syrup, whipped cream."
+      },
+      {
+        name: "Spicy Ramen Bowl",
+        time: "18 min",
+        rating: 5.0,
+        price: "₹347.00",
+        img: "https://www.seriouseats.com/thmb/iD62ByO0qeACNjfCV5eZEqkBxhQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__recipes__images__2014__01__20140120-beef-ramyun-homemade-recipe-15-014423f0ac734abc8c0d826e54857afe.jpg",
+        description:"A bold and flavorful dish, our Spicy Ramen Bowl delivers the comforting essence of traditional Japanese cuisine with a fiery twist. At the heart of this bowl lies a deeply seasoned miso broth simmered with spices that bring warmth and heat to each spoonful. Nestled within are perfectly cooked ramen noodles that hold their texture, topped with tender slices of slow-cooked pork belly, a marinated soft-boiled egg with a golden yolk, crunchy scallions, and strips of nori seaweed. Every element is carefully arranged to create a visually stunning and tastefully balanced meal that awakens the senses.<br><br><b>Main Ingredients:</b> Ramen noodles, spicy miso broth, pork belly, egg, scallions, nori."
+      },
+      {
+        name: "Chocolate Lava Cake",
+        time: "12 min",
+        rating: 4.9,
+        price: " ₹190.00",
+        img: "https://www.melskitchencafe.com/wp-content/uploads/2023/01/updated-lava-cakes7-500x500.jpg",
+        description: "Indulge in our signature Chocolate Lava Cake, a decadent dessert crafted for true chocolate lovers. This rich, individual-sized cake boasts a delicate outer shell made from premium dark chocolate, encasing a warm, molten chocolate center that flows out with every bite. The balance of bittersweet cocoa and smooth, buttery texture creates a luxurious mouthfeel. Served elegantly with a dusting of powdered sugar, a drizzle of chocolate sauce, and a generous scoop of velvety vanilla bean ice cream, this dessert offers a contrast of temperatures and textures that’s both comforting and unforgettable. <br><br><b>Main Ingredients:</b> Dark chocolate, cocoa, butter, eggs, vanilla extract, flour."
+      }
+    ];
+
+    const menu = document.getElementById("menu");
+
+    menuItems.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${item.img}" alt="${item.name}" />
+        <div class="info">
+          <h3>${item.name}</h3>
+          <div class="meta">
+            <span>${item.time}</span>
+            <span>⭐ ${item.rating}</span>
+          </div>
+          <div class="meta">
+            <strong>${item.price}</strong>
+          </div>
+        </div>
+      `;
+      card.onclick = () => openDetails(item);
+      menu.appendChild(card);
+    });
+
+    function openDetails(item) {
+      document.getElementById("detail-img").src = item.img;
+      document.getElementById("detail-title").textContent = item.name;
+      document.getElementById("detail-meta").innerHTML = `${item.time} • ⭐ ${item.rating} • <strong>${item.price}</strong>`;
+      document.getElementById("detail-description").innerHTML = item.description;
+      document.getElementById("details").style.display = 'block';
+    }
+
+    function closeDetails() {
+      document.getElementById("details").style.display = 'none';
+    }
+  </script>
+</body>
+</html>
